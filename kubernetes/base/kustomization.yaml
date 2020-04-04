@@ -1,0 +1,5 @@
+commonLabels:
+  app: attendance-slack
+resources:
+  - secret.yaml
+  - deployment.yaml

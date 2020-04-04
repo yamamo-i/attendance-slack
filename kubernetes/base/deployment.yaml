@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: attendance-slack
+  labels:
+    app: attendance-slack
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: attendance-slack
+  template:
+    metadata:
+      labels:
+        app: attendance-slack
+    spec:
+      containers:
+      - name: attendance-slack
+        image: yamamoi/attendance-slack:latest
+        command:
+          - /bin/sh
+          - -c
+          - while :; do sleep 10; done
+        env:
+          - name: SLACK_API_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: attendance-slack-secret
+                key: slack_api_token
+          - name: ERROR_TO
+            valueFrom:
+              secretKeyRef:
+                name: attendance-slack-secret
+                key: error_to
+          - name: AKASHI_COMPANY_ID
+            valueFrom:
+              secretKeyRef:
+                name: attendance-slack-secret
+                key: akashi_company_id
+          - name: AKASHI_USER_INFO
+            valueFrom:
+              secretKeyRef:
+                name: attendance-slack-secret
+                key: akashi_user_info
