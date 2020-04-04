@@ -23,6 +23,14 @@
     ```
 
 ### docker
+#### upload済みのdocker imageで起動
+* dokcer hubにimageをアップロード済み
+    https://hub.docker.com/repository/docker/yamamoi/attendance-slack
+* 起動
+    ```shelll
+    $ docker run --env-file=envfile yamamoi/attendance-slack
+    ```
+#### localからdocker imageを作成して起動
 * image作成
     ```shell
     $ docker build -t [image_name]:[tag_name] .
