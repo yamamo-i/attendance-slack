@@ -39,13 +39,28 @@
     ```shell
     $ docker run --env-file=envfile [image_name]:[tag_name]
     ```
-### local起動
+### local
 * 起動
     ```shell
     $ source envfile_local
     $ python run.sh
     ```
-
+### Kubernetes
+検証したkuberctlのversionは `v1.18.0`
+#### secret.yamlの生成
+```shell
+$ cp kubernetes/base/secret_sample.yaml kubernetes/base/secret.yaml
+# echo -n [value] | base64 でencode dataをenvfile.sampleに相当する値を生成する
+$ [editor] kubernetes/base/secret.yaml
+```
+#### Kubernetesへのデプロイ
+```shell
+$ kubectl kustomize kubernetes/base | kubectl apply -f -
+```
+#### Kubernetesのリソース削除
+```shell
+$ kubectl kustomize kubernetes/base | kubectl delete -f -
+```
 # slackでの使い方
 
 * botにメンションをつけて特定のmessageを付与する

@@ -1,0 +1,6 @@
+namePrefix: dev-
+commonLabels:
+  variant: dev
+bases:
+  - ../../base
+
