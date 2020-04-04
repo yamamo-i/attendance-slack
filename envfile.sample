@@ -1,0 +1,4 @@
+SLACK_API_TOKEN=token
+ERROR_TO=yamamo-i
+AKASHI_COMPANY_ID=company_id
+AKASHI_USER_INFO={"slack_user_name": "akashi_token"}
