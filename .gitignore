@@ -130,6 +130,7 @@ dmypy.json
 
 # ignore product
 envfile
+GITHUB_TOKEN.txt
 
 # edtor
 .idea/
