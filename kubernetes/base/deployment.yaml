@@ -17,10 +17,6 @@ spec:
       containers:
       - name: attendance-slack
         image: yamamoi/attendance-slack:latest
-        command:
-          - /bin/sh
-          - -c
-          - while :; do sleep 10; done
         env:
           - name: SLACK_API_TOKEN
             valueFrom:
