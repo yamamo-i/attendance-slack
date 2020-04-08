@@ -1,20 +1,18 @@
 import logging
 from json import dumps, loads
 from urllib import error, request, parse
-import os
 from attendance_slack.akashi.dakoku_type import DakokuType
 
 
 class AkashiClient():
 
-    def __init__(self, user_name):
+    def __init__(self, user_name, company_id, user_info):
         # TODO: 環境変数系の値はconfig.pyとかにまとめる
-        self.company_id = os.getenv("AKASHI_COMPANY_ID")
+        self.company_id = company_id
         # user情報はmapで{"slack_user_name": "token"}の形式でもらう
-        user_map = loads(os.getenv("AKASHI_USER_INFO"))
-        self.token = user_map[user_name]
+        self.token = user_info[user_name]
         self.url = "https://atnd.ak4.jp"
-        self.base_path = "api/cooperation/{}".format(self.company_id)
+        self.base_path = "api/cooperation"
 
     def dakoku(self, dakoku_type):
         """打刻APIを発行する.
@@ -26,14 +24,33 @@ class AkashiClient():
         # request msgの設定
         request_body = {"type": dakoku_type.value}
         # TODO ここもっとキレイに書きたい
-        url = parse.urljoin(self.url, self.base_path + "/stamps" + "?token={}".format(self.token))
+        url = parse.urljoin(self.url, self.base_path + "/{}/stamps?token={}".format(self.company_id, self.token))
         req = request.Request(url, dumps(request_body).encode(), method="POST")
-        logging.debug(req)
+        self._request_api(req)
 
-        # requestの発行
+    def update_token(self):
+        """Akashiのtokenを更新する.
+
+            https://akashi.zendesk.com/hc/ja/articles/115000475854-AKASHI-%E5%85%AC%E9%96%8BAPI-%E4%BB%95%E6%A7%98#get_token
+            return: str 新規発行したtoken
+        """
+        url = parse.urljoin(self.url, self.base_path + "/token/reissue/{}?token={}".format(self.company_id, self.token))
+        req = request.Request(url, None, method="POST")
+        res_body = loads(self._request_api(req))
+        return res_body["response"]["token"]
+
+    def _request_api(self, req):
+        """AkashiへのAPIを発行.
+            req: urllib.request.Request
+            return: str responseのbody
+        """
+        logging.debug(req)
         try:
+            body = None
             with request.urlopen(req) as res:
-                logging.info("request is ok. {}".format(res.read()))
+                body = res.read()
+                logging.info("request is ok. {}".format(body))
+            return body
         except error.HTTPError as e:
-            logging.error("not return OK response from akashi. code:{} ,reason: {}".format(e.code, e.read().decode('utf-8')))
+            logging.error("return NG response from akashi. code:{} ,reason: {}".format(e.code, e.read().decode('utf-8')))
             raise e
