@@ -132,7 +132,10 @@ dmypy.json
 envfile
 **/*/secret.yaml
 GITHUB_TOKEN.txt
+build
+dist
 
 # edtor
 .idea/
 .vscode/
+
