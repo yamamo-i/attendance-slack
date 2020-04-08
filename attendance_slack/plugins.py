@@ -1,6 +1,8 @@
 from slackbot.bot import respond_to
 from attendance_slack.akashi.client import AkashiClient
 from attendance_slack.akashi.dakoku_type import DakokuType
+from json import loads
+import os
 
 
 # ------出勤系-------
@@ -53,7 +55,7 @@ def _dakoku(message, dakoku_type):
     dakoku_type: akashi.dakoku_type.DakokuType
     """
     user_name = message._client.get_user(message.body["user"])["name"]
-    AkashiClient(user_name).dakoku(dakoku_type)
+    AkashiClient(user_name, os.getenv("AKASHI_COMPANY_ID"), loads(os.getenv("AKASHI_USER_INFO"))).dakoku(dakoku_type)
 
 
 def react_start(message):
