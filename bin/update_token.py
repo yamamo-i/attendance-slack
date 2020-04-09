@@ -15,7 +15,7 @@ with open(args.config) as file:
     user_info = json_loads(b64decode(secret["data"]["akashi_user_info"]))
     company_id = b64decode(secret["data"]["akashi_company_id"]).decode("utf-8")
     if (args.dry_run):
-        print(user_info)
+        print(dumps(user_info))
     else:
         new_user_info = {}
         for user_name, _ in user_info.items():
