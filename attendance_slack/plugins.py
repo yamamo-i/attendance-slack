@@ -21,6 +21,11 @@ def buturishusha(message):
     _shukkin(message)
 
 
+@respond_to(":rimowakaishi:")
+def rimowakaishi(message):
+    _shukkin(message)
+
+
 def _shukkin(message):
     react_start(message)
     _dakoku(message, DakokuType.SHUKKIN)
@@ -40,6 +45,11 @@ def ronritaisha(message):
 
 @respond_to(":buturitaisha:")
 def buturitaisha(message):
+    _taikin(message)
+
+
+@respond_to(":rimowashuryo:")
+def rimowashuryo(message):
     _taikin(message)
 
 
