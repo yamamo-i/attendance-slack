@@ -64,8 +64,13 @@ def _dakoku(message, dakoku_type):
     message: slack_apiのdefaultで引き回されるmessageオブジェクト
     dakoku_type: akashi.dakoku_type.DakokuType
     """
-    user_name = message._client.get_user(message.body["user"])["name"]
-    AkashiClient(user_name, os.getenv("AKASHI_COMPANY_ID"), loads(os.getenv("AKASHI_USER_INFO"))).dakoku(dakoku_type)
+    try:
+        user_name = message._client.get_user(message.body["user"])["name"]
+        AkashiClient(user_name, os.getenv("AKASHI_COMPANY_ID"), loads(os.getenv("AKASHI_USER_INFO"))).dakoku(dakoku_type)
+    except Exception as e:
+        # Akashiへの打刻ができなかった場合にリアクションをつける
+        message.react('damedatta')
+        raise e
 
 
 def react_start(message):
