@@ -2,6 +2,7 @@ import logging
 from json import dumps, loads
 from urllib import error, request, parse
 from attendance_slack.akashi.dakoku_type import DakokuType
+from attendance_slack.akashi.user_not_found_exception import UserNotFoundException
 
 
 class AkashiClient():
@@ -10,7 +11,10 @@ class AkashiClient():
         # TODO: 環境変数系の値はconfig.pyとかにまとめる
         self.company_id = company_id
         # user情報はmapで{"slack_user_name": "token"}の形式でもらう
-        self.token = user_info[user_name]
+        try:
+            self.token = user_info[user_name]
+        except KeyError as e:
+            raise UserNotFoundException("Not a registered user: {}".format(user_name), e)
         self.url = "https://atnd.ak4.jp"
         self.base_path = "api/cooperation"
 

@@ -1,6 +1,7 @@
 from slackbot.bot import respond_to
 from attendance_slack.akashi.client import AkashiClient
 from attendance_slack.akashi.dakoku_type import DakokuType
+from attendance_slack.akashi.user_not_found_exception import UserNotFoundException
 from json import loads
 import os
 
@@ -67,6 +68,9 @@ def _dakoku(message, dakoku_type):
     try:
         user_name = message._client.get_user(message.body["user"])["name"]
         AkashiClient(user_name, os.getenv("AKASHI_COMPANY_ID"), loads(os.getenv("AKASHI_USER_INFO"))).dakoku(dakoku_type)
+    except UserNotFoundException as ue:
+        message.reply("ぜひ管理者に登録してもらってね :hugging_face:")
+        raise ue
     except Exception as e:
         # Akashiへの打刻ができなかった場合にリアクションをつける
         message.react('damedatta')
