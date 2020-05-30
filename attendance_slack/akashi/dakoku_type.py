@@ -1,12 +1,12 @@
-from enum import Enum
+from enum import IntEnum
 
 
-class DakokuType(Enum):
+class DakokuType(IntEnum):
     """
     [ref] https://akashi.zendesk.com/hc/ja/articles/115000475854-AKASHI-%E5%85%AC%E9%96%8BAPI-%E4%BB%95%E6%A7%98#stamp
         11 : 出勤
         12 : 退勤
-        TODO: 21以降は今使ってない
+        MEMO: 21以降は今使ってない(使うと崩れるので使う場合はテストコード必須)
         21 : 直行
         22 : 直帰
         31 : 休憩入
