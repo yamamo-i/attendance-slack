@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 from json import dumps, loads
 from urllib import error, request, parse
@@ -32,6 +33,19 @@ class AkashiClient():
         req = request.Request(url, dumps(request_body).encode(), method="POST")
         self._request_api(req)
 
+    def get_stamps(self, start_date, end_date):
+        """打刻情報を取得するAPIを発行する.
+
+            https://akashi.zendesk.com/hc/ja/articles/115000475854-AKASHI-%E5%85%AC%E9%96%8BAPI-%E4%BB%95%E6%A7%98#get_stamp
+            start_type: datetime
+            end_type: datetime
+            return: dict response body
+        """
+        _date_format = "%Y%m%d%H%M%S"
+        url = parse.urljoin(self.url, self.base_path + "/{}/stamps?token={}&start_date={}&end_date={}".format(
+            self.company_id, self.token, datetime.strftime(start_date, _date_format), datetime.strftime(end_date, _date_format)))
+        req = request.Request(url, method="GET")
+        return loads(self._request_api(req))
     def update_token(self):
         """Akashiのtokenを更新する.
 
