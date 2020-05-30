@@ -1,9 +1,7 @@
 from slackbot.bot import respond_to
-from attendance_slack.akashi.client import AkashiClient
 from attendance_slack.akashi.dakoku_type import DakokuType
-from attendance_slack.akashi.user_not_found_exception import UserNotFoundException
-from json import loads
-import os
+from attendance_slack.akashi.exception import BadShukkinStateException, BadTaikinStateException, UserNotFoundException
+from attendance_slack.akashi.use_case import AkashiUseCase
 
 
 # ------出勤系-------
@@ -28,9 +26,7 @@ def rimowakaishi(message):
 
 
 def _shukkin(message):
-    react_start(message)
     _dakoku(message, DakokuType.SHUKKIN)
-    react_done(message)
 
 
 # ------退勤系-------
@@ -55,9 +51,7 @@ def rimowashuryo(message):
 
 
 def _taikin(message):
-    react_start(message)
     _dakoku(message, DakokuType.TAIKIN)
-    react_done(message)
 
 
 def _dakoku(message, dakoku_type):
@@ -65,21 +59,19 @@ def _dakoku(message, dakoku_type):
     message: slack_apiのdefaultで引き回されるmessageオブジェクト
     dakoku_type: akashi.dakoku_type.DakokuType
     """
+    message.react('akashi')
     try:
         user_name = message._client.get_user(message.body["user"])["name"]
-        AkashiClient(user_name, os.getenv("AKASHI_COMPANY_ID"), loads(os.getenv("AKASHI_USER_INFO"))).dakoku(dakoku_type)
-    except UserNotFoundException as ue:
-        message.reply("ぜひ管理者に登録してもらってね :hugging_face:")
-        raise ue
+        AkashiUseCase.dakoku(user_name, dakoku_type)
+    except UserNotFoundException:
+        message.reply("ぜひ管理者にユーザ登録してもらってね :hugging_face:")
+    except BadShukkinStateException:
+        message.reply("前営業日の退勤の打刻をしていないかも :thinking_face:")
+    except BadTaikinStateException:
+        message.reply("出勤の打刻をしていないかも :thinking_face:")
     except Exception as e:
-        # Akashiへの打刻ができなかった場合にリアクションをつける
+        message.reply("技術的な問題で打刻できませんでした :cry: 管理者が解析します :pray:")
         message.react('damedatta')
         raise e
-
-
-def react_start(message):
-    message.react('akashi')
-
-
-def react_done(message):
-    message.react('done')
+    else:
+        message.react('done')
