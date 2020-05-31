@@ -1,7 +1,8 @@
-from slackbot.bot import respond_to
 from attendance_slack.akashi.dakoku_type import DakokuType
 from attendance_slack.akashi.exception import BadShukkinStateException, BadTaikinStateException, UserNotFoundException
 from attendance_slack.akashi.use_case import AkashiUseCase
+import logging
+from slackbot.bot import respond_to
 
 
 # ------出勤系-------
@@ -59,19 +60,24 @@ def _dakoku(message, dakoku_type):
     message: slack_apiのdefaultで引き回されるmessageオブジェクト
     dakoku_type: akashi.dakoku_type.DakokuType
     """
+    user_name = message._client.get_user(message.body["user"])["name"]
+    logging.info("start: dakoku type: user_name[{}] dakoku_type[{}]".format(user_name, dakoku_type.name))
     message.react('akashi')
     try:
-        user_name = message._client.get_user(message.body["user"])["name"]
         AkashiUseCase.dakoku(user_name, dakoku_type)
     except UserNotFoundException:
+        logging.warning("user not found. user_name[{}]".format(user_name))
         message.reply("ぜひ管理者にユーザ登録してもらってね :hugging_face:")
     except BadShukkinStateException:
+        logging.warning("Bad shukkin state exception. user_name[{}]".format(user_name), exc_info=True)
         message.reply("前営業日の退勤の打刻をしていないかも :thinking_face:")
     except BadTaikinStateException:
+        logging.warning("Bad taikin state exception. user_name[{}]".format(user_name), exc_info=True)
         message.reply("出勤の打刻をしていないかも :thinking_face:")
-    except Exception as e:
+    except Exception:
+        logging.error("unexcept exception...!!", exc_info=True)
         message.reply("技術的な問題で打刻できませんでした :cry: 管理者が解析します :pray:")
         message.react('damedatta')
-        raise e
     else:
+        logging.info("finish: dakoku type: user_name[{}] dakoku_type[{}]".format(user_name, dakoku_type.name))
         message.react('done')
