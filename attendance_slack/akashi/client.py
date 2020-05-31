@@ -71,7 +71,7 @@ class AkashiClient():
             body = None
             with request.urlopen(req) as res:
                 body = res.read()
-                logging.info("request is ok. {}".format(body))
+                logging.debug("request is ok. response body: {}".format(body))
             return body
         except error.HTTPError as e:
             logging.error("return NG response from akashi. code:{} ,reason: {}".format(

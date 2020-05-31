@@ -51,4 +51,4 @@ class AkashiUseCase():
         res = client.get_stamps(start_date, end_date)
         stamps = res["response"]["stamps"]
         # TODO: DakokuTypeが他の状態も使うとエラーになる...
-        return [stamp for stamp in stamps if stamp in list(DakokuType)]
+        return [stamp for stamp in stamps if stamp["type"] in list(DakokuType)]
