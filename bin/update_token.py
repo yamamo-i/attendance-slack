@@ -14,7 +14,7 @@ with open(args.config) as file:
     secret = yaml_load(file, Loader=FullLoader)
     user_info = json_loads(b64decode(secret["data"]["akashi_user_info"]))
     company_id = b64decode(secret["data"]["akashi_company_id"]).decode("utf-8")
-    if (args.dry_run):
+    if args.dry_run:
         print(dumps(user_info))
     else:
         new_user_info = {}
