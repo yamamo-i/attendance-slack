@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "attendance-slack"
+version = "0.1.0"
+description = "Akashi bot in Slack."
+authors = ["yamamo-i <sw.spc2010@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "3.9.2"
+PyYAML = "^5.4.1"
+slackbot = "^1.0.0"
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.7.4"
+flake8 = "^3.9.0"
+autopep8 = "^1.5.6"
+ptpython = "^3.0.17"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
