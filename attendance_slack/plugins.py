@@ -1,7 +1,12 @@
+import os
+
 from attendance_slack.akashi.dakoku_type import DakokuType
 from attendance_slack.akashi.exception import BadShukkinStateException, BadTaikinStateException, UserNotFoundException
 from attendance_slack.akashi.use_case import AkashiUseCase
+from attendance_slack.aws.ssm_client import AwsSsmClient
+from attendance_slack.token_store_type import TokenStoreType
 import logging
+from json import loads
 from slackbot.bot import respond_to
 
 
@@ -64,7 +69,16 @@ def _dakoku(message, dakoku_type):
     logging.info("start: dakoku type: user_name[{}] dakoku_type[{}]".format(user_name, dakoku_type.name))
     message.react('akashi')
     try:
-        AkashiUseCase.dakoku(user_name, dakoku_type)
+        # tokenが置かれている場所をconfigで切り替え可能にする
+        token_store = os.getenv("TOKEN_STORE", TokenStoreType.LOCAL.value)
+        # localの場合、環境変数からの取得になる.
+        if token_store == TokenStoreType.LOCAL.value:
+            AkashiUseCase.dakoku(user_name, dakoku_type, loads(os.getenv('AKASHI_USER_INFO')))
+        # aws_ssmの場合, awsのssmから取得する。追加でparameter nameやkey_idが必要となる。
+        elif token_store == TokenStoreType.AWS_SSM.value:
+            ssm_client = AwsSsmClient(os.getenv('AWS_PROFILE'))
+            param = ssm_client.get_parameter(os.getenv('PSTORE_NAME'))
+            AkashiUseCase.dakoku(user_name, dakoku_type, loads(param))
     except UserNotFoundException:
         logging.warning("user not found. user_name[{}]".format(user_name))
         message.reply("ぜひ管理者にユーザ登録してもらってね :hugging_face:")

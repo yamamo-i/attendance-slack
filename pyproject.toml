@@ -5,9 +5,10 @@ description = "Akashi bot in Slack."
 authors = ["yamamo-i <sw.spc2010@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "3.9.2"
+python = "^3.9.2"
 PyYAML = "^5.4.1"
 slackbot = "^1.0.0"
+boto3 = "1.20.54"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.7.4"

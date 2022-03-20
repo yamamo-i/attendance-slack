@@ -6,7 +6,7 @@ from attendance_slack.akashi.dakoku_type import DakokuType
 from attendance_slack.akashi.exception import UserNotFoundException
 
 
-class AkashiClient():
+class AkashiClient:
 
     def __init__(self, user_name, company_id, user_info):
         # TODO: 環境変数系の値はconfig.pyとかにまとめる
