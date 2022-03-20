@@ -4,4 +4,4 @@ AKASHI_COMPANY_ID=company_id
 TOKEN_STORE=aws_ssm
 AWS_PROFILE=default
 PSTORE_NAME=/ssm/pstore/name
-AWS_ROLE_NAME=role_name
+AWS_ROLE_ARN=role_arn

@@ -19,7 +19,7 @@ EOF
 
 function setup_ecs {
      mkdir ~/.aws
-     echo -e "[profile ${AWS_PROFILE}]\nrole_arn = arn:aws:iam::${AWS_PROFILE}:role/${AWS_ROLE_NAME}\ncredential_source = EcsContainer" > ~/.aws/config
+     echo -e "[profile ${AWS_PROFILE}]\nrole_arn = ${AWS_ROLE_ARN}\ncredential_source = EcsContainer" > ~/.aws/config
 }
 
 function start_server {
