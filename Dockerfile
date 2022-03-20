@@ -1,14 +1,18 @@
-FROM python:3.7.7-alpine3.11
+FROM python:3.9.11-alpine3.15
 
 RUN apk update \
-        && apk add --no-cache git openssh-client \
-        && pip install pipenv
+    && apk add --no-cache git openssh-client build-base musl-dev libffi-dev \
+    && pip install poetry
 
 RUN mkdir -p /app/src
 WORKDIR /app/src
 ADD *.py ./
 ADD attendance_slack ./attendance_slack
-ADD Pipfile* ./
-RUN pipenv install --python /usr/local/bin/python
+ADD poetry.lock ./
+ADD pyproject.toml ./
+ADD bin ./bin
+RUN poetry install
 
-ENTRYPOINT ["pipenv", "run", "python", "run.py"]
+ADD docker-entrypoint.sh ./
+RUN chmod +x docker-entrypoint.sh
+ENTRYPOINT ["./docker-entrypoint.sh"]
