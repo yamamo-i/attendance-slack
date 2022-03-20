@@ -32,12 +32,7 @@ function start_server_ecs {
 }
 
 function update_token() {
-     poetry run python bin/aws_ssm/update_token.py -c ${AKASHI_COMPANY_ID} -p ${AWS_PROFILE} -n ${PSTORE_NAME} -k ${KEY_ID}
-}
-
-function update_token_ecs {
-    setup_ecs
-    update_token
+     poetry run python bin/aws_ssm/update_token.py -c ${AKASHI_COMPANY_ID} -n ${PSTORE_NAME} -k ${KEY_ID}
 }
 
 case ${1} in
@@ -45,8 +40,6 @@ case ${1} in
         start_server;;
     server_ecs)
         start_server_ecs;;
-    update_token_ecs)
-        update_token_ecs;;
     update_token)
         update_token;;
     *)
