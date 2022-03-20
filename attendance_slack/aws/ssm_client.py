@@ -6,10 +6,12 @@ import traceback
 
 class AwsSsmClient:
 
-    # TODO 本来はprofileなどを渡すが、まずは権限がついている前提とする
-    def __init__(self, profile: str):
-        session = Session(profile_name=profile)
-        self.ssm = session.client('ssm')
+    def __init__(self, profile: str = None):
+        if profile is None:
+            self.ssm = boto3.client('ssm')
+        else:
+            session = Session(profile_name=profile)
+            self.ssm = session.client('ssm')
 
     def get_parameter(self, name: str) -> str:
         try:
