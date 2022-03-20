@@ -2,21 +2,20 @@ from attendance_slack.akashi.client import AkashiClient
 from attendance_slack.akashi.dakoku_type import DakokuType
 from attendance_slack.akashi.exception import BadShukkinStateException, BadTaikinStateException
 from datetime import datetime, timedelta, timezone
-from json import loads
 import os
 
 
-class AkashiUseCase():
+class AkashiUseCase:
 
     @classmethod
-    def dakoku(cls, user_name, dakoku_type):
+    def dakoku(cls, user_name: str, dakoku_type: str, user_info: dict) -> None:
         """Akashiに打刻(出勤/退勤)を発行する
         user_name: str dakokuするuserの名前
         dakoku_type: akashi.dakoku_type.DakokuType
         """
         client = AkashiClient(user_name,
                               os.getenv("AKASHI_COMPANY_ID"),
-                              loads(os.getenv("AKASHI_USER_INFO")))
+                              user_info)
         # 直前の打刻状態をチェックする
         JST = timezone(timedelta(hours=+9), 'JST')
         end_date = datetime.now(JST)
