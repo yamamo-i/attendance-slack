@@ -17,7 +17,12 @@ if args.dry_run:
 else:
     new_user_info = {}
     for user_name, _ in user_info.items():
-        new_token = AkashiClient(user_name, args.company_id, user_info).update_token()
-        new_user_info[user_name] = new_token
-        print(f'updated token {user_name}.')
+        try:
+            new_token = AkashiClient(user_name, args.company_id, user_info).update_token()
+            new_user_info[user_name] = new_token
+            print(f'updated token {user_name}.')
+        except Exception:
+            # 退職者は更新できないので管理tokenから抹消
+            # TODO AWS SSMはバージョニングされるので、今は`退職者`の厳密なハンドリングはしていない
+            print(f'cannot update token. {user_name}')
     ssm_client.put_parameter(args.name, dumps(new_user_info), args.key_id)
