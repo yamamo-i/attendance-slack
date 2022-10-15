@@ -12,5 +12,6 @@ class DakokuType(IntEnum):
         31 : 休憩入
         32 : 休憩戻
     """
+
     SHUKKIN = 11
     TAIKIN = 12
