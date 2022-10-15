@@ -1,13 +1,18 @@
+import logging
 import os
+from json import loads
+
+from slackbot.bot import respond_to
 
 from attendance_slack.akashi.dakoku_type import DakokuType
-from attendance_slack.akashi.exception import BadShukkinStateException, BadTaikinStateException, UserNotFoundException
+from attendance_slack.akashi.exception import (
+    BadShukkinStateException,
+    BadTaikinStateException,
+    UserNotFoundException,
+)
 from attendance_slack.akashi.use_case import AkashiUseCase
 from attendance_slack.aws.ssm_client import AwsSsmClient
 from attendance_slack.token_store_type import TokenStoreType
-import logging
-from json import loads
-from slackbot.bot import respond_to
 
 
 # ------出勤系-------
@@ -66,32 +71,47 @@ def _dakoku(message, dakoku_type):
     dakoku_type: akashi.dakoku_type.DakokuType
     """
     user_name = message._client.get_user(message.body["user"])["name"]
-    logging.info("start: dakoku type: user_name[{}] dakoku_type[{}]".format(user_name, dakoku_type.name))
-    message.react('akashi')
+    logging.info(
+        "start: dakoku type: user_name[{}] dakoku_type[{}]".format(
+            user_name, dakoku_type.name
+        )
+    )
+    message.react("akashi")
     try:
         # tokenが置かれている場所をconfigで切り替え可能にする
         token_store = os.getenv("TOKEN_STORE", TokenStoreType.LOCAL.value)
         # localの場合、環境変数からの取得になる.
         if token_store == TokenStoreType.LOCAL.value:
-            AkashiUseCase.dakoku(user_name, dakoku_type, loads(os.getenv('AKASHI_USER_INFO')))
+            AkashiUseCase.dakoku(
+                user_name, dakoku_type, loads(os.getenv("AKASHI_USER_INFO"))
+            )
         # aws_ssmの場合, awsのssmから取得する。追加でparameter nameやkey_idが必要となる。
         elif token_store == TokenStoreType.AWS_SSM.value:
-            ssm_client = AwsSsmClient(os.getenv('AWS_PROFILE'))
-            param = ssm_client.get_parameter(os.getenv('PSTORE_NAME'))
+            ssm_client = AwsSsmClient(os.getenv("AWS_PROFILE"))
+            param = ssm_client.get_parameter(os.getenv("PSTORE_NAME"))
             AkashiUseCase.dakoku(user_name, dakoku_type, loads(param))
     except UserNotFoundException:
         logging.warning("user not found. user_name[{}]".format(user_name))
         message.reply("ぜひ管理者にユーザ登録してもらってね :hugging_face:")
     except BadShukkinStateException:
-        logging.warning("Bad shukkin state exception. user_name[{}]".format(user_name), exc_info=True)
+        logging.warning(
+            "Bad shukkin state exception. user_name[{}]".format(user_name),
+            exc_info=True,
+        )
         message.reply("前営業日の退勤の打刻をしていないかも :thinking_face:")
     except BadTaikinStateException:
-        logging.warning("Bad taikin state exception. user_name[{}]".format(user_name), exc_info=True)
+        logging.warning(
+            "Bad taikin state exception. user_name[{}]".format(user_name), exc_info=True
+        )
         message.reply("出勤の打刻をしていないかも :thinking_face:")
     except Exception:
         logging.error("unexcept exception...!!", exc_info=True)
         message.reply("技術的な問題で打刻できませんでした :cry: 管理者が解析します :pray:")
-        message.react('damedatta')
+        message.react("damedatta")
     else:
-        logging.info("finish: dakoku type: user_name[{}] dakoku_type[{}]".format(user_name, dakoku_type.name))
-        message.react('done')
+        logging.info(
+            "finish: dakoku type: user_name[{}] dakoku_type[{}]".format(
+                user_name, dakoku_type.name
+            )
+        )
+        message.react("done")

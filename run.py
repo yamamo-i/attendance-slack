@@ -1,5 +1,6 @@
-from slackbot.bot import Bot
 import logging
+
+from slackbot.bot import Bot
 
 
 def main():
@@ -9,6 +10,8 @@ def main():
 
 if __name__ == "__main__":
     # TODO: configのクラスを作って最初にコールできるようにする
-    logging.basicConfig(format='%(asctime)s [%(levelname)s]: %(message)s', level=logging.INFO)
+    logging.basicConfig(
+        format="%(asctime)s [%(levelname)s]: %(message)s", level=logging.INFO
+    )
     logging.info("starting....")
     main()

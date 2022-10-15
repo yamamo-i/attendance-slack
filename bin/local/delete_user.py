@@ -1,8 +1,10 @@
 import argparse
 from base64 import b64decode, b64encode
-from json import loads as json_loads, dumps
-from yaml import FullLoader, load as yaml_load
+from json import dumps
+from json import loads as json_loads
 
+from yaml import FullLoader
+from yaml import load as yaml_load
 
 p = argparse.ArgumentParser()
 p.add_argument("-c", "--config", required=True, help="k8sのsecret yamlのファイルパス")
