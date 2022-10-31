@@ -1,13 +1,18 @@
 import argparse
-from attendance_slack.akashi.client import AkashiClient
 from base64 import b64decode, b64encode
-from json import loads as json_loads, dumps
-from yaml import FullLoader, load as yaml_load
+from json import dumps
+from json import loads as json_loads
 
+from yaml import FullLoader
+from yaml import load as yaml_load
+
+from attendance_slack.akashi.client import AkashiClient
 
 p = argparse.ArgumentParser()
 p.add_argument("-c", "--config", required=True, help="k8sのsecret yamlのファイルパス")
-p.add_argument("-d", "--dry-run", action="store_true", help="tokenの再発行をせずにユーザ情報のjsonを出力する")
+p.add_argument(
+    "-d", "--dry-run", action="store_true", help="tokenの再発行をせずにユーザ情報のjsonを出力する"
+)
 args = p.parse_args()
 
 with open(args.config) as file:
@@ -17,7 +22,7 @@ with open(args.config) as file:
     if args.dry_run:
         print(dumps(user_info))
     else:
-        new_user_info = {}
+        new_user_info: dict = {}
         for user_name, _ in user_info.items():
             new_token = AkashiClient(user_name, company_id, user_info).update_token()
             user_info[user_name] = new_token
