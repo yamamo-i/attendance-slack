@@ -26,7 +26,7 @@ def ronrishusha(message):
     _shukkin(message)
 
 
-@respond_to(":buturishusha:")
+@respond_to(":buts?urishusha:")
 def buturishusha(message):
     _shukkin(message)
 
@@ -51,7 +51,7 @@ def ronritaisha(message):
     _taikin(message)
 
 
-@respond_to(":buturitaisha:")
+@respond_to(":buts?uritaisha:")
 def buturitaisha(message):
     _taikin(message)
 
