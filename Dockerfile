@@ -14,6 +14,10 @@ ADD bin ./bin
 # 仮想環境を作成しない設定
 RUN poetry config virtualenvs.create false &&  poetry install  --no-dev
 
+# SSLエラーが発生するようになってしまったので暫定的な回避策
+# TODO: 本来はbase imageなどで正しく対応したほうがよい(https://github.com/yamamo-i/attendance-slack/issues/33)
+ENV WEBSOCKET_CLIENT_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
+
 ADD docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh
 ENTRYPOINT ["./docker-entrypoint.sh"]
